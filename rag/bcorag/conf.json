@@ -1,0 +1,7 @@
+{
+  "paper_directory": "../papers/",
+  "loaders": {
+    "list": ["SimpleDirectoryReader"],
+    "default": "SimpleDirectoryReader"
+  }
+}
