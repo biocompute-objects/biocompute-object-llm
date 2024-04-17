@@ -1,9 +1,9 @@
 # Custom Retrieval Augmented Generation (RAG) Approach
 
-- [Approach Justification and Background](#approach-justification-and-background)
-    - [Issues with Long Context Windows](#issues-with-long-context-windows)
-    - [Training Data and False Extrapolation](#training-data-and-false-extrapolation)
-- [Usage](#usage)
+## Usage Guides
+
+- [Installation and Setup](./docs/installation.md)
+- [Usage](./docs/usage.md)
 
 ## Approach Justification and Background
 
@@ -24,5 +24,3 @@ LLMs are also highly sensitive to the quality of the training data. A study from
 > By crafting "textbook quality" data we were able to train a model that surpasses almost all open-source models on coding benchmarks such as HumanEval and MBPP despite being 10x smaller in model size and 100x smaller in dataset size. 
 
 When explicit facts aren't availble, standalone LLMs can extrapolate fabricated outputs resulting in confident, but false output. Since we are leveraging existing pre-trained LLMs and do not have the resources to control the training data specificity and quality, we can leverage a RAG framework to supplement our requests with up-to-date, accurate, and relevant information. Rather than relying on the LLM to extrapolate itself, we can supply it with the exact related information it needs to parse, format, and summarize.
-
-## Usage
