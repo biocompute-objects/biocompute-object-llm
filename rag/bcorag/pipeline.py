@@ -3,7 +3,8 @@ Handles the actual pipeline steps for each step in the RAG pipeline.
 """
 
 from bcorag import misc_functions as misc_fns
-from bcorag import pdf_picker as pp
+from bcorag import option_picker as op
+from bcorag.bcorag import BcoRag
 
 
 def initalize_step() -> dict | None:
@@ -26,7 +27,21 @@ def initalize_step() -> dict | None:
         }
         or None if the user selects to exit at any point in the process.
     """
-    user_choices = pp.initialize_picker()
-    if user_choices is None:
-        misc_fns.graceful_exit()
+    user_choices = op.initialize_picker()
     return user_choices
+
+def retrieve_bco_rag(options: dict) -> BcoRag:
+    """ Handles the RAG setup using the options selected by the user
+    in the initialization step.
+
+    Parameters
+    ----------
+    options : dict
+        The user choices dictionary returned by the initialize_step.
+
+    Returns
+    -------
+    BcoRag
+        An instance of the BcoRag.
+    """
+    return BcoRag(options)
