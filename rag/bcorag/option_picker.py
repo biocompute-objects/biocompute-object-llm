@@ -4,12 +4,12 @@ Will automatically grab any PDF file in the ../../papers/ directory.
 
 import glob
 import os
-import json
 from pick import pick
 from bcorag import misc_functions as misc_fns
 from typing import Tuple, Any
 
 EXIT_OPTION = "Exit"
+
 
 def initialize_picker(filetype: str = "pdf") -> dict | None:
     """Kicks off the initial pipeline step where the user picks their
@@ -36,23 +36,25 @@ def initialize_picker(filetype: str = "pdf") -> dict | None:
         or None if the user selects to exit at any point in the process.
     """
 
-    return_data: dict[str, Any] = {
-        "filename": None,
-        "filepath": None,
-        "loader": None,
-        "embedding_model": None,
-        "vector_store": None,
-        "llm": None,
-    }
+    presets = misc_fns.load_json("./bcorag/conf.json")
 
-    with open("./bcorag/conf.json", "r") as f:
-        presets = json.load(f)
+    return_data: dict[str, Any] = {f"{option}": None for option in presets["options"].keys()}
 
     target_file_information = _file_picker(presets["paper_directory"], filetype)
     if target_file_information is None:
         return None
     return_data["filename"] = target_file_information[0]
     return_data["filepath"] = target_file_information[1]
+
+    for option in presets["options"].keys():
+        target_option = _create_picker(
+            option,
+            presets["options"][option]["list"],
+            presets["options"][option].get("default", None),
+        )
+        if target_option is None:
+            return None
+        return_data[option] = target_option
 
     return return_data
 
@@ -76,12 +78,13 @@ def _file_picker(path: str, filetype: str = "pdf") -> Tuple[str, str] | None:
     target_files = glob.glob(f"{path}*.{filetype}")
     pick_options = [os.path.basename(filename) for filename in target_files]
     pick_options.append(EXIT_OPTION)
-    pick_title = "Please choose the PDF file to index: "
+    pick_title = "Please choose the PDF file to index:"
     option, _ = pick(pick_options, pick_title, indicator="->")
     option = str(option)
-    if option == EXIT_OPTION: 
+    if option == EXIT_OPTION:
         return None
     return str(option), f"{path}{option}"
+
 
 def _create_picker(
     title_keyword: str, option_list: list[str], default: str | None = None
@@ -103,9 +106,15 @@ def _create_picker(
     str or None
         The chosen option of None if the user selected to exit.
     """
-    pick_title = f"Please choose your selected {title_keyword}"
+    pick_title = f"Please choose one of the following {title_keyword}s:"
     pick_options = [
         f"{option} (default)" if option == default else option for option in option_list
     ]
+    pick_options.append(EXIT_OPTION)
     option, _ = pick(pick_options, pick_title, indicator="->")
-    return str(option)
+    option = str(option)
+    if option == EXIT_OPTION:
+        return None
+    if " (default)" in option:
+        option = option.replace(" (default)", "")
+    return option
