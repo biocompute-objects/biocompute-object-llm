@@ -1,6 +1,8 @@
 # Usage
 
+- [Preliminary Steps](#preliminary-steps)
 - [Startup](#startup)
+- [Generate Domains](#generate-domains)
 - [Options](#options)
     - [Data Loader](#data-loader)
     - [Embedding Model](#embedding-model)
@@ -9,6 +11,10 @@
     - [Mode](#mode)
 
 ---
+
+## Preliminary Steps
+
+Make sure the setup steps in the [Installation and Setup](./installation.md) documentation are complete.
 
 ## Startup
 
@@ -20,9 +26,13 @@ From within the `rag/` directory, start the project like so:
 
 On startup, you will be prompted to choose some configuration options. More details on the specifics of each option are documented in the [Options](#options) section.
 
+## Generate Domains
+
+After your configurations selections are confirmed, you'll be asked which domain you would like to generate. You can enter either the one letter shortcode for each domain or the full domain name. A new output subdirectory will be created in the `output/` directory named after the PDF file. Each domain will have at least one output file on each generation. The code will attempt to serialize the return response into a valid JSON object and if successful, will dump the JSON object in a file called `<selected_domain>_domain.json`. Regardless if the JSON serialization succeeds, the raw return response will be dumped in a text file with the file name format of `<selected domain>_domain.txt`. If you re-run the same domain multiple times in the same run instance, the output files will be overwritten with the latest generated response for that domain.
+
 ## Options
 
-The option picker interface can be navigated with the `n` or `down arrow` keys for the next option, `p` or `up arrow` key for the previous option, and the `Enter` key to choose the option. If you choose the `Exit` option at any step in the process the program will exit with a status code of 0.
+The option picker interface can be navigated with the `n` or `down arrow` keys for the next option, `p` or `up arrow` key for the previous option, and the `Enter` key to choose the option. If you choose the `Exit` option at any step in the process the program will exit with a status code of `0`.
 
 ### Data Loader
 
