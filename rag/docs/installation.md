@@ -55,7 +55,7 @@ OPENAI_API_KEY=<KEY>
 
 ## Usage
 
-The RAG approach can be run liek so: 
+The RAG approach can be run like so: 
 
 ```bash
 (env) python main.py
