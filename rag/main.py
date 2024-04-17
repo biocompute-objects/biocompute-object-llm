@@ -13,9 +13,12 @@ def main():
 
     # handle domain generation
     bco_rag = pipeline.retrieve_bco_rag(user_picks) # type: ignore
-    response = bco_rag.choose_domain(automatic_query=True)
-    if response is None:
-        misc_fns.graceful_exit()
+    while True:
+        domain = bco_rag.choose_domain()
+        if domain is None:
+            misc_fns.graceful_exit()
+        _ = bco_rag.perform_query(domain) # type: ignore
+        print(f"Successfully generated the {domain} domain.\n")
 
 if __name__ == "__main__":
     main()
