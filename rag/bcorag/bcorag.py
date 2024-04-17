@@ -7,22 +7,38 @@ from llama_index.llms.openai import OpenAI  # type: ignore
 from llama_index.embeddings.openai import OpenAIEmbedding  # type: ignore
 from dotenv import load_dotenv
 import tiktoken
+import os
+import json
 import bcorag.misc_functions as misc_fns
-from bcorag.prompts import QUERY_PROMPT, USABILITY_DOMAIN
+from bcorag.prompts import (
+    QUERY_PROMPT,
+    TOP_LEVEL_SCHEMA,
+    USABILITY_DOMAIN,
+    IO_DOMAIN,
+    DESCRIPTION_DOMAIN,
+    EXECUTION_DOMAIN,
+    PARAMETRIC_DOMAIN,
+    ERROR_DOMAIN,
+)
 
 
 class BcoRag:
     """Class to handle the RAG implementation."""
 
-    def __init__(self, user_selections: dict[str, str]):
+    def __init__(self, user_selections: dict[str, str], output_dir: str = "./output"):
         """Constructor.
 
         Parameters
         ---------
         user_selections : dict[str, str]
+            The user configuration selections.
+        output_dir : str (default: "./output")
+            The directory to dump the outputs.
 
         Attributes
         ----------
+        output_path : str
+            Path to the specific document directory to dump the outputs.
         debug : bool
             Whether in debug mode or not.
         file_name : str
@@ -52,6 +68,8 @@ class BcoRag:
 
         load_dotenv()
 
+        self.output_path = f"{output_dir}/{os.path.splitext(_file_name.lower().replace(' ', '_').strip())[0]}/"
+        misc_fns.check_dir(self.output_path)
         self.debug = True if _mode == "debug" else False
         self.file_name = _file_name
         self.logger = misc_fns.setup_document_logger(
@@ -73,7 +91,30 @@ class BcoRag:
             self.index = VectorStoreIndex.from_documents(self.documents)
 
         # domain mapping
-        self.domain_map = {"usability": USABILITY_DOMAIN}
+        self.domain_map = {
+            "usability": {
+                "prompt": USABILITY_DOMAIN,
+                "user_prompt": "[u]sability",
+                "code": "u",
+            },
+            "io": {"prompt": IO_DOMAIN, "user_prompt": "[i]o", "code": "i"},
+            "description": {
+                "prompt": DESCRIPTION_DOMAIN,
+                "user_prompt": "[d]escription",
+                "code": "d",
+            },
+            "execution": {
+                "prompt": EXECUTION_DOMAIN,
+                "user_prompt": "[e]xecution",
+                "code": "e",
+            },
+            "parametric": {
+                "prompt": PARAMETRIC_DOMAIN,
+                "user_prompt": "[p]arametric",
+                "code": "p",
+            },
+            "error": {"prompt": ERROR_DOMAIN, "user_prompt": "[err]or", "code": "err"},
+        }
 
         # handle additional output for debugging mode
         if self.debug:
@@ -106,19 +147,113 @@ class BcoRag:
             The generated domain.
         """
         query_engine = self.index.as_query_engine(verbose=self.debug)
-        query_prompt = QUERY_PROMPT.format(domain, self.domain_map[domain])
-        # TODO: implement query logic, conditional debug logging and replace temporary return
+        query_prompt = QUERY_PROMPT.format(domain, self.domain_map[domain]["prompt"])
         response_object = query_engine.query(query_prompt)
         query_response = str(response_object)
 
         if self.debug:
             self._display_info(query_prompt, f"QUERY PROMPT for the {domain} domain:")
-            self.token_counts["input"] += self.token_counter.prompt_llm_token_count # type: ignore
-            self.token_counts["output"] += self.token_counter.completion_llm_token_count # type: ignore
-            self.token_counts["total"] += self.token_counter.total_llm_token_count # type: ignore
-        self._display_info(query_response, f"QUERY RESPONSE for the {domain} domain:")
+            self.token_counts["input"] += self.token_counter.prompt_llm_token_count  # type: ignore
+            self.token_counts["output"] += self.token_counter.completion_llm_token_count  # type: ignore
+            self.token_counts["total"] += self.token_counter.total_llm_token_count  # type: ignore
+            self.token_counts["embedding"] += self.token_counter.total_embedding_token_count # type: ignore
+            self._display_info(self.token_counts, "Updated token counts:")
+
+        self._process_output(domain, query_response)
 
         return query_response
+
+    def choose_domain(
+        self, automatic_query: bool = False
+    ) -> tuple[str, str] | str | None:
+        """Gets the user input for the domain the user wants to generate.
+
+        Parameters
+        ----------
+        automatic_query : bool (default: False)
+            Whether to automatically query after the user chooses a domain. If set to
+            True this is a shortcut to calling bcorag.perform_query(choose_domain()).
+
+        Returns
+        -------
+        (str, str), str or None
+            If automatic query is set to True will return a tuple containing the domain
+            name and the query response. If automatic query is False will return the user
+            chosen domain. None is returned if the user chooses to exit.
+        """
+        domain_prompt = (
+            "Which domain would you like to generate? Supported domains are:"
+        )
+        for domain in self.domain_map.keys():
+            domain_prompt += f"\n\t{self.domain_map[domain]['user_prompt']}"
+        domain_prompt += "\n\tExit\n"
+        print(domain_prompt)
+        domain_selection = None
+        while True:
+            domain_selection = input().strip().lower()
+            for domain in self.domain_map.keys():
+                if (
+                    domain_selection == domain
+                    or domain_selection == self.domain_map[domain]["code"]
+                ):
+                    domain_selection = domain
+                    break
+            else:
+                if domain_selection == "exit":
+                    if self.debug:
+                        self._display_info(
+                            "User selected 'exit' on the domain picker step."
+                        )
+                    return None
+                else:
+                    if self.debug:
+                        self._display_info(
+                            f"User entered inrecognized input '{domain_selection}' on domain chooser step."
+                        )
+                    print(
+                        f"Unrecognized input {domain_selection} entered, please try again."
+                    )
+                    continue
+            break
+        if automatic_query:
+            if self.debug:
+                self._display_info(
+                    f"Automatic query called on domain: '{domain_selection}'."
+                )
+            return domain_selection, self.perform_query(domain_selection)
+        if self.debug:
+            self._display_info(
+                f"User chose '{domain_selection}' with no automatic query."
+            )
+        return domain_selection
+
+    def _process_output(self, domain: str, response: str):
+        """Attempts to serialize the response into a JSON object and dumps the raw text.
+
+        Parameters
+        ----------
+        domain : str
+            The domain the response is for.
+        response : str
+            The generated response to dump.
+        """
+        txt_file = f"{self.output_path}{domain}_domain.txt"
+        json_file = f"{self.output_path}{domain}_domain.json"
+        if response.startswith("```json\n"):
+            response = response.replace("```json\n", "").replace("```", "")
+        self._display_info(response, f"QUERY RESPONSE for the '{domain}' domain:")
+        with open(txt_file, "w") as f:
+            f.write(response)
+        try:
+            response_json = json.loads(response)
+            if misc_fns.write_json(json_file, response_json):
+                self.logger.info(
+                    f"Successfully serialized JSON response for the '{domain}' domain."
+                )
+        except Exception as e:
+            self.logger.error(
+                f"Failed to serialize the JSON response for the '{domain}' domain. View raw output in the txt file located at '{txt_file}'.\n{e}"
+            )
 
     def _display_info(self, info: dict | list | str | None, header: str | None = None):
         """If in debug mode, handles the debug info output to the log file.
