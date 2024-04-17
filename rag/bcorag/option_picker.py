@@ -51,6 +51,7 @@ def initialize_picker(filetype: str = "pdf") -> dict | None:
     for option in presets["options"].keys():
         target_option = _create_picker(
             option,
+            presets["options"][option]["documentation"],
             presets["options"][option]["list"],
             presets["options"][option].get("default", None),
         )
