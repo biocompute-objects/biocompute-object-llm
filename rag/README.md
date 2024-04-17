@@ -4,6 +4,9 @@
 
 - [Installation and Setup](./docs/installation.md)
 - [Usage](./docs/usage.md)
+- [Future Direction](./docs/future.md)
+
+![Demo GIF](./docs/imgs/demo.gif)
 
 ## Approach Justification and Background
 
