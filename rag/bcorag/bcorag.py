@@ -87,6 +87,7 @@ class BcoRag:
                 "output": 0,
                 "total": 0,
             }
+            self._display_info(user_selections, "User selections:")
         else:
             self.token_counter = None
             self.token_counts = None
@@ -104,14 +105,35 @@ class BcoRag:
         str
             The generated domain.
         """
-        query_engine = self.index.as_query_engine()
+        query_engine = self.index.as_query_engine(verbose=self.debug)
         query_prompt = QUERY_PROMPT.format(domain, self.domain_map[domain])
-        if self.debug:
-            self._print_debug_info()
         # TODO: implement query logic, conditional debug logging and replace temporary return
-        return query_prompt
+        response_object = query_engine.query(query_prompt)
+        query_response = str(response_object)
 
-    def _print_debug_info(self):
-        """If in debug mode, handles the debug info output to the log file."""
-        # TODO
-        self.logger.info("test")
+        if self.debug:
+            self._display_info(query_prompt, f"QUERY PROMPT for the {domain} domain:")
+            self.token_counts["input"] += self.token_counter.prompt_llm_token_count # type: ignore
+            self.token_counts["output"] += self.token_counter.completion_llm_token_count # type: ignore
+            self.token_counts["total"] += self.token_counter.total_llm_token_count # type: ignore
+        self._display_info(query_response, f"QUERY RESPONSE for the {domain} domain:")
+
+        return query_response
+
+    def _display_info(self, info: dict | list | str | None, header: str | None = None):
+        """If in debug mode, handles the debug info output to the log file.
+
+        Parameters
+        ----------
+        info : dict, list, str or None
+            The object to log.
+        header : str or None (efault: None)
+            The optional header to log before the info.
+        """
+        log_str = header if header is not None else ""
+        if isinstance(info, dict):
+            for key, value in info.items():
+                log_str += f"\n\t{key}: '{value}'"
+        elif isinstance(info, str):
+            log_str += f"\n{info}"
+        self.logger.info(log_str)
