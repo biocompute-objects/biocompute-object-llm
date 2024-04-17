@@ -38,7 +38,9 @@ def initialize_picker(filetype: str = "pdf") -> dict | None:
 
     presets = misc_fns.load_json("./bcorag/conf.json")
 
-    return_data: dict[str, Any] = {f"{option}": None for option in presets["options"].keys()}
+    return_data: dict[str, Any] = {
+        f"{option}": None for option in presets["options"].keys()
+    }
 
     target_file_information = _file_picker(presets["paper_directory"], filetype)
     if target_file_information is None:
@@ -87,7 +89,10 @@ def _file_picker(path: str, filetype: str = "pdf") -> Tuple[str, str] | None:
 
 
 def _create_picker(
-    title_keyword: str, option_list: list[str], default: str | None = None
+    title_keyword: str,
+    documentation: str,
+    option_list: list[str],
+    default: str | None = None,
 ) -> str | None:
     """Creates a general picker CLI based on a list of options and the
     functionality to optionally mark one option as the default.
@@ -96,6 +101,8 @@ def _create_picker(
     ----------
     title_keyword : str
         The keyword to use for the picker title.
+    documentation : str
+        Link to the documentation for the option.
     option_list : list[str]
         The list of options to display in the picker menu.
     default : str or None (default: None)
@@ -106,7 +113,7 @@ def _create_picker(
     str or None
         The chosen option of None if the user selected to exit.
     """
-    pick_title = f"Please choose one of the following {title_keyword}s:"
+    pick_title = f"Please choose one of the following {title_keyword.replace('_', ' ').title()}s. Documentation can be found at {documentation}."
     pick_options = [
         f"{option} (default)" if option == default else option for option in option_list
     ]
