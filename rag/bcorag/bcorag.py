@@ -75,6 +75,7 @@ class BcoRag:
         self.logger = misc_fns.setup_document_logger(
             self.file_name.lower().strip().replace(" ", "_")
         )
+        self._display_info(user_selections, "User selections:")
 
         # setup embedding model
         self.embed_model = OpenAIEmbedding(model=_embed_model_name)
@@ -128,7 +129,6 @@ class BcoRag:
                 "output": 0,
                 "total": 0,
             }
-            self._display_info(user_selections, "User selections:")
         else:
             self.token_counter = None
             self.token_counts = None
@@ -186,7 +186,7 @@ class BcoRag:
         )
         for domain in self.domain_map.keys():
             domain_prompt += f"\n\t{self.domain_map[domain]['user_prompt']}"
-        domain_prompt += "\n\tExit\n"
+        domain_prompt += "\n\tE[x]it\n"
         print(domain_prompt)
         domain_selection = None
         while True:
@@ -199,16 +199,16 @@ class BcoRag:
                     domain_selection = domain
                     break
             else:
-                if domain_selection == "exit":
+                if domain_selection == "exit" or domain_selection == "x":
                     if self.debug:
                         self._display_info(
-                            "User selected 'exit' on the domain picker step."
+                            "User selected 'exit' on the domain selection step."
                         )
                     return None
                 else:
                     if self.debug:
                         self._display_info(
-                            f"User entered inrecognized input '{domain_selection}' on domain chooser step."
+                            f"User entered unrecognized input '{domain_selection}' on domain chooser step."
                         )
                     print(
                         f"Unrecognized input {domain_selection} entered, please try again."
@@ -270,5 +270,5 @@ class BcoRag:
             for key, value in info.items():
                 log_str += f"\n\t{key}: '{value}'"
         elif isinstance(info, str):
-            log_str += f"\n{info}"
+            log_str += f"{info}" if header is None else f"\n{info}"
         self.logger.info(log_str)
