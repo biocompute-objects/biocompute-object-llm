@@ -4,6 +4,7 @@
 import sys
 import json
 import logging
+import os
 
 
 def graceful_exit():
@@ -31,6 +32,44 @@ def load_json(filepath: str) -> dict:
     """
     with open(filepath, "r") as f:
         return json.load(f)
+
+
+def write_json(output_path: str, data: dict | list) -> bool:
+    """Writes JSON out to the output path. Will create the file if it doesn't exist.
+
+    Parameters
+    ----------
+    output_path : str
+        The output file path.
+    data : dict or list
+        The data to dump.
+
+    Returns
+    -------
+    bool
+        Whether the process was successful.
+    """
+    try:
+        with open(output_path, "w") as f:
+            json.dump(data, f)
+        return True
+    except Exception as e:
+        logging.error(f"Failed to dump JSON to output path '{output_path}'.\n{e}")
+        return False
+
+
+def check_dir(path: str):
+    """Checks whether a directory creates and if it doesn't, create it. Note, this
+    really only works for checking/creating the last level direcotry. Will fail if
+    there are issues in the parent level directories in the path.
+
+    Parameters
+    ----------
+    path : str
+        Directory filepath to check.
+    """
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
 
 def setup_root_logger(log_path: str, name: str = "bcorag") -> logging.Logger:
