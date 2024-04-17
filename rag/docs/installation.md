@@ -2,6 +2,7 @@
 
 - [Prerequisites](#prerequisites)
 - [Virtual Environment](#virtual-environment)
+- [Create Log Directory](#create-log-directory)
 - [OpenAI API Key](#openai-api-key)
 
 ## Prerequisites
@@ -51,6 +52,14 @@ Create your `.env` file and add your OpenAI API key. For example:
 
 ```.env
 OPENAI_API_KEY=<KEY>
+```
+
+## Create log Directory
+
+Within the `rag/` directory, create the log directory:
+
+```bash
+mkdir logs/
 ```
 
 ## Usage
