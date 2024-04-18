@@ -7,7 +7,7 @@
 
 ## Prerequisites
 
-This directory requires at least Python 3.10 to setup. The code in this directory makes extensive use of an alternate way to indicate union types as `X | Y` instead of `Union[X, Y]`.
+This directory requires at least Python 3.10 to setup. The code in this directory makes extensive use of an alternate way to indicate union type annotations as `X | Y` instead of `Union[X, Y]`.
 
 ## Clone the repository
 
