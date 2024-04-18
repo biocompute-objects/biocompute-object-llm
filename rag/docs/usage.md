@@ -43,6 +43,7 @@ Aside from the built in generic data loaders, LLamaIndex hosts an open source [h
 The currently supported data loaders are:
 
 - `SimpleDirectoryReader` (default): This is a built-in data loader provided directly by the LlamaIndex library. It is the most generic option and is not specialized in any specific file type.
+- `PDFReader`: This is an external data loader from LlamaHub that is specialized to PDF files. Because this is an external reader, there will be some overhead the first time you choose this option as the loader will have to be downloaded. Once downloaded, future runs with this option will not incur the download overhead. If this option is chosen, you will see command line ouptut checking if the dependency requirements are satisfied. 
 
 ### Embedding Model
 
