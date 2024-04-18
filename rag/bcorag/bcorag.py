@@ -37,6 +37,8 @@ class BcoRag:
 
         Attributes
         ----------
+        domain_map : dict
+            Mapping for each domain to its standardized prompt.
         output_path : str
             Path to the specific document directory to dump the outputs.
         debug : bool
@@ -51,8 +53,6 @@ class BcoRag:
             The list of documents (containers for the data source).
         index : VectorStoreIndex
             The vector indexer instance.
-        domain_map : dict
-            Mapping for each domain to its standardized prompt.
         token_counter : TokenCountingHandler or None
             The token counter handler or None if mode is production.
         token_counts : dict or None
@@ -65,31 +65,6 @@ class BcoRag:
         _vector_store = user_selections["vector_store"]
         _loader = user_selections["loader"]
         _mode = user_selections["mode"]
-
-        load_dotenv()
-
-        self.output_path = f"{output_dir}/{os.path.splitext(_file_name.lower().replace(' ', '_').strip())[0]}/"
-        misc_fns.check_dir(self.output_path)
-        self.debug = True if _mode == "debug" else False
-        self.file_name = _file_name
-        self.logger = misc_fns.setup_document_logger(
-            self.file_name.lower().strip().replace(" ", "_")
-        )
-        self._display_info(user_selections, "User selections:")
-
-        # setup embedding model
-        self.embed_model = OpenAIEmbedding(model=_embed_model_name)
-        Settings.embed_model = self.embed_model
-
-        # setup llm model
-        Settings.llm = OpenAI(model=_llm_model_name)
-
-        # handle data loader
-        if _loader == "SimpleDirectoryReader":
-            self.documents = SimpleDirectoryReader(input_files=[_file_path]).load_data()
-        # handle indexing
-        if _vector_store == "VectorStoreIndex":
-            self.index = VectorStoreIndex.from_documents(self.documents)
 
         # domain mapping
         self.domain_map = {
@@ -117,6 +92,24 @@ class BcoRag:
             "error": {"prompt": ERROR_DOMAIN, "user_prompt": "[err]or", "code": "err"},
         }
 
+        load_dotenv()
+
+        self.output_path = f"{output_dir}/{os.path.splitext(_file_name.lower().replace(' ', '_').strip())[0]}/"
+        misc_fns.check_dir(self.output_path)
+        self.debug = True if _mode == "debug" else False
+        self.file_name = _file_name
+        self.logger = misc_fns.setup_document_logger(
+            self.file_name.lower().strip().replace(" ", "_")
+        )
+        self._display_info(user_selections, "User selections:")
+
+        # setup embedding model
+        self.embed_model = OpenAIEmbedding(model=_embed_model_name)
+        Settings.embed_model = self.embed_model
+
+        # setup llm model
+        Settings.llm = OpenAI(model=_llm_model_name)
+
         # handle additional output for debugging mode
         if self.debug:
             self.token_counter: TokenCountingHandler | None = TokenCountingHandler(
@@ -124,7 +117,7 @@ class BcoRag:
             )
             Settings.callback_manager = CallbackManager([self.token_counter])
             self.token_counts: dict | None = {
-                "embedding": self.token_counter.total_embedding_token_count,
+                "embedding": 0,
                 "input": 0,
                 "output": 0,
                 "total": 0,
@@ -132,6 +125,17 @@ class BcoRag:
         else:
             self.token_counter = None
             self.token_counts = None
+
+        # handle data loader
+        if _loader == "SimpleDirectoryReader":
+            self.documents = SimpleDirectoryReader(input_files=[_file_path]).load_data()
+        # handle indexing
+        if _vector_store == "VectorStoreIndex":
+            self.index = VectorStoreIndex.from_documents(self.documents)
+
+        # capture indexing embed token
+        if self.debug:
+            self.token_counts["embedding"] += self.token_counter.total_embedding_token_count # type: ignore
 
     def perform_query(self, domain: str) -> str:
         """Performs a qeury for a specific BCO domain.
