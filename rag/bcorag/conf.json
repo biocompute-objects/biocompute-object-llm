@@ -2,7 +2,7 @@
   "paper_directory": "../papers/",
   "options": {
     "loader": {
-      "list": ["SimpleDirectoryReader"],
+      "list": ["SimpleDirectoryReader", "PDFReader"],
       "default": "SimpleDirectoryReader",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#data-loader"
     },

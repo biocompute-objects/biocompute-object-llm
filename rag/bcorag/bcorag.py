@@ -1,12 +1,13 @@
 """ Handles the RAG implementation using the llama-index library.
 """
 
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings, download_loader
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.llms.openai import OpenAI  # type: ignore
 from llama_index.embeddings.openai import OpenAIEmbedding  # type: ignore
 from dotenv import load_dotenv
 import tiktoken
+from pathlib import Path
 import os
 import json
 import bcorag.misc_functions as misc_fns
@@ -128,7 +129,13 @@ class BcoRag:
 
         # handle data loader
         if _loader == "SimpleDirectoryReader":
-            self.documents = SimpleDirectoryReader(input_files=[_file_path]).load_data()
+            loader = SimpleDirectoryReader(input_files=[_file_path])
+            documents = loader.load_data()
+        elif _loader == "PDFReader":
+            pdf_loader = download_loader("PDFReader")
+            documents = pdf_loader().load_data(file=Path(_file_path))
+        self.documents = documents # type: ignore
+
         # handle indexing
         if _vector_store == "VectorStoreIndex":
             self.index = VectorStoreIndex.from_documents(self.documents)
