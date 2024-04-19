@@ -114,7 +114,7 @@ def _create_picker(
     str or None
         The chosen option of None if the user selected to exit.
     """
-    pick_title = f"Please choose one of the following {title_keyword.replace('_', ' ').title()}s. Documentation can be found at {documentation}."
+    pick_title = f"Please choose one of the following {title_keyword.replace('_', ' ').title()}s.\nDocumentation can be found at:\n{documentation}."
     pick_options = [
         f"{option} (default)" if option == default else option for option in option_list
     ]
