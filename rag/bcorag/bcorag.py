@@ -1,7 +1,12 @@
 """ Handles the RAG implementation using the llama-index library.
 """
 
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings, download_loader
+from llama_index.core import (
+    VectorStoreIndex,
+    SimpleDirectoryReader,
+    Settings,
+    download_loader,
+)
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
 from llama_index.llms.openai import OpenAI  # type: ignore
 from llama_index.embeddings.openai import OpenAIEmbedding  # type: ignore
@@ -13,7 +18,7 @@ import json
 import bcorag.misc_functions as misc_fns
 from bcorag.prompts import (
     QUERY_PROMPT,
-    TOP_LEVEL_SCHEMA,
+    SUPPLEMENT_PROMPT,
     USABILITY_DOMAIN,
     IO_DOMAIN,
     DESCRIPTION_DOMAIN,
@@ -71,26 +76,40 @@ class BcoRag:
         self.domain_map = {
             "usability": {
                 "prompt": USABILITY_DOMAIN,
+                "top_level": False,
                 "user_prompt": "[u]sability",
                 "code": "u",
             },
-            "io": {"prompt": IO_DOMAIN, "user_prompt": "[i]o", "code": "i"},
+            "io": {
+                "prompt": IO_DOMAIN,
+                "top_level": True,
+                "user_prompt": "[i]o",
+                "code": "i",
+            },
             "description": {
                 "prompt": DESCRIPTION_DOMAIN,
+                "top_level": True,
                 "user_prompt": "[d]escription",
                 "code": "d",
             },
             "execution": {
                 "prompt": EXECUTION_DOMAIN,
+                "top_level": True,
                 "user_prompt": "[e]xecution",
                 "code": "e",
             },
             "parametric": {
                 "prompt": PARAMETRIC_DOMAIN,
+                "top_level": False,
                 "user_prompt": "[p]arametric",
                 "code": "p",
             },
-            "error": {"prompt": ERROR_DOMAIN, "user_prompt": "[err]or", "code": "err"},
+            "error": {
+                "prompt": ERROR_DOMAIN,
+                "top_level": False,
+                "user_prompt": "[err]or",
+                "code": "err",
+            },
         }
 
         load_dotenv()
@@ -134,7 +153,7 @@ class BcoRag:
         elif _loader == "PDFReader":
             pdf_loader = download_loader("PDFReader")
             documents = pdf_loader().load_data(file=Path(_file_path))
-        self.documents = documents # type: ignore
+        self.documents = documents  # type: ignore
 
         # handle indexing
         if _vector_store == "VectorStoreIndex":
@@ -142,7 +161,7 @@ class BcoRag:
 
         # capture indexing embed token
         if self.debug:
-            self.token_counts["embedding"] += self.token_counter.total_embedding_token_count # type: ignore
+            self.token_counts["embedding"] += self.token_counter.total_embedding_token_count  # type: ignore
 
     def perform_query(self, domain: str) -> str:
         """Performs a qeury for a specific BCO domain.
@@ -159,6 +178,8 @@ class BcoRag:
         """
         query_engine = self.index.as_query_engine(verbose=self.debug)
         query_prompt = QUERY_PROMPT.format(domain, self.domain_map[domain]["prompt"])
+        if self.domain_map[domain]["top_level"]:
+            query_prompt += f"\n{SUPPLEMENT_PROMPT}"
         response_object = query_engine.query(query_prompt)
         query_response = str(response_object)
 
@@ -167,7 +188,7 @@ class BcoRag:
             self.token_counts["input"] += self.token_counter.prompt_llm_token_count  # type: ignore
             self.token_counts["output"] += self.token_counter.completion_llm_token_count  # type: ignore
             self.token_counts["total"] += self.token_counter.total_llm_token_count  # type: ignore
-            self.token_counts["embedding"] += self.token_counter.total_embedding_token_count # type: ignore
+            self.token_counts["embedding"] += self.token_counter.total_embedding_token_count  # type: ignore
             self._display_info(self.token_counts, "Updated token counts:")
 
         self._process_output(domain, query_response)
