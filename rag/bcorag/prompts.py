@@ -1,7 +1,8 @@
 """ The standardized query prompts.
 
 QUERY_PROMPT: The standard wrapper used for each prompt.
-TOP_LEVEL_SCHEMA: The entire top level 2791 object schema.
+_TOP_LEVEL_SCHEMA: The entire top level 2791 object schema.
+SUPPLEMENT_PROMPT: Supplementary prompt for the domains that require the top level schema.
 USABILITY_DOMAIN: The usability domain specific prompt and schema.
 IO_DOMAIN: The IO domain specific prompt and schema.
 DESCRIPTION_DOMAIN: The description domain specific prompt and schema.
@@ -12,7 +13,7 @@ ERROR_DOMAIN: The error domain specific prompt and schema.
 
 QUERY_PROMPT = "Can you give me a BioCompute Object {} domain for the provided paper. The return response must be valid JSON and must validate against the JSON schema I am providing you. {}"
 
-TOP_LEVEL_SCHEMA = """
+_TOP_LEVEL_SCHEMA = """
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://w3id.org/ieee/ieee-2791-schema/2791object.json",
@@ -192,6 +193,8 @@ TOP_LEVEL_SCHEMA = """
     }
 }
 """
+
+SUPPLEMENT_PROMPT = f"Some of the fields are defined in the top level 2791object JSON schema which is as follows: {_TOP_LEVEL_SCHEMA}"
 
 USABILITY_DOMAIN = """The Usability domain in a BioCompute Object is a plain languages description
 of what was done in the project or paper workflow. The Usasability domain conveys the purpose
