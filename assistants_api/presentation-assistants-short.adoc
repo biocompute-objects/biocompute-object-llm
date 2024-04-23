@@ -1,0 +1,36 @@
+== Large Language Models (LLMs)
+image::./img/LLMs-data-ingest.png[]
+
+== Large Language Models (LLMs)
+[%step]
+* Example LLMs: ChatGPT, Gemini, Llamma, Claude, capable of understanding and generating human-like language, images, music.
+* Data scope: Trained on massive datasets, including PetaBytes of internet text, Wikipedia and Pubmed.
+* Applications: LLMs are utilized in chatbots, text generation, reasoning and problem solving, creative output.
+
+== Artificial Neural Networks
+image::./img/GPTs.png[]
+
+== Artificial Neural Networks
+[%step]
+* Scalability: LLMs are based on Generative Pre-trained Transformers (GPTs), can be "prompt-engineered" for complex tasks.
+* Definition: Artificial Neural Networks (ANNs), are fundamentally complex non-linear function estimators - pattern classifiers.
+* Innovation:  GPTs are ANNs that implement "multi-head attention", enabling capture of long-range patterns in training data, emergent "intelligence".
+
+== Generation and Inference
+image::img/FDA-LLMs.png[]
+
+== Generation and Inference
+[%step]
+* Text Generation: LLMs create responses by predicting likely sequences of words, based on billions of probabilities.
+* Inference Techniques: The models use sophisticated algorithms to generate text that aligns with context and user input.
+* Diversity: Can produce a wide range of responses, from factual information to hallucinations and "deepfakes".
+
+== Fine-Tuning and Adaptation
+image::./img/Fine-tuned.png[]
+
+== Fine-Tuning and Adaptation
+[%step]
+* Fine-Tuning: LLMs can be fine-tuned with data from specific domains, enhancing their relevance and performance.
+* Task-Specific: Fine-tuning produces tailored AI models for specialized applications, i.e. bioinformatics / biomedical research.
+* Alternative: Fine-tuning costs computing time, instead similar achievements via carefully designed prompt-engineering.
+
