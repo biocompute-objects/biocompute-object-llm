@@ -1,0 +1,30 @@
+{
+  "paper_directory": "../papers/",
+  "options": {
+    "loader": {
+      "list": ["SimpleDirectoryReader", "PDFReader"],
+      "default": "SimpleDirectoryReader",
+      "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#data-loader"
+    },
+    "embedding_model": {
+      "list": ["text-embedding-3-small", "text-embedding-3-large", "text-embedding-ada-002"],
+      "default": "text-embedding-3-small",
+      "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#embedding-model"
+    },
+    "vector_store": {
+      "list": ["VectorStoreIndex"],
+      "default": "VectorStoreIndex",
+      "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#vector-store"
+    },
+    "llm": {
+      "list": ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4-turbo-preview", "gpt-4"],
+      "default": "gpt-4-turbo",
+      "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#llm-model"
+    },
+    "mode": {
+      "list": ["debug", "production"],
+      "default": "production",
+      "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#mode"
+    }
+  }
+}
