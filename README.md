@@ -13,5 +13,3 @@ For this proof of concept, two main approaches were explored: the [OpenAI Assist
 ## Testing
 
 For baseline testing, a hand-selected set of papers were used (found in the `papers/` directory). 
-
-## Results
