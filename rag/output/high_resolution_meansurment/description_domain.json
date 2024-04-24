@@ -1,0 +1,57 @@
+{
+    "keywords": [
+        "DUF1220",
+        "gene copy number",
+        "next-generation sequencing",
+        "human genome",
+        "genomic analysis"
+    ],
+    "pipeline_steps": [
+        {
+            "step_number": 1,
+            "name": "Data Retrieval",
+            "description": "Download sequence data from the 1000 Genomes Project",
+            "input_list": [],
+            "output_list": [
+                {
+                    "uri": "ftp://ftp.sra.ebi.ac.uk/vol1/fastq",
+                    "access_time": "2023-11-01T12:00:00Z"
+                }
+            ]
+        },
+        {
+            "step_number": 2,
+            "name": "Data Annotation",
+            "description": "Annotate DUF1220 domains using custom software",
+            "input_list": [
+                {
+                    "uri": "https://github.com/IleaHeft/DUF1220annotator",
+                    "access_time": "2023-11-01T12:00:00Z"
+                }
+            ],
+            "output_list": [
+                {
+                    "uri": "https://github.com/IleaHeft/DUF1220annotator/output",
+                    "access_time": "2023-11-01T12:00:00Z"
+                }
+            ]
+        },
+        {
+            "step_number": 3,
+            "name": "Simulation",
+            "description": "Perform simulations to predict gene copy number variations",
+            "input_list": [
+                {
+                    "uri": "https://github.com/dpastling/DUF1220_simulation",
+                    "access_time": "2023-11-01T12:00:00Z"
+                }
+            ],
+            "output_list": [
+                {
+                    "uri": "https://github.com/dpastling/DUF1220_simulation/output",
+                    "access_time": "2023-11-01T12:00:00Z"
+                }
+            ]
+        }
+    ]
+}

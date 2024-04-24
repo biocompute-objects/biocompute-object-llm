@@ -1,0 +1,51 @@
+{
+    "script": [
+        {
+            "uri": {
+                "uri": "https://github.com/dpastling/plethora",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        },
+        {
+            "uri": {
+                "uri": "https://github.com/dpastling/DUF1220_simulation",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        },
+        {
+            "uri": {
+                "uri": "https://github.com/IleaHeft/DUF1220annotator",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        }
+    ],
+    "script_driver": "shell",
+    "software_prerequisites": [
+        {
+            "name": "Python",
+            "version": "3.8",
+            "uri": {
+                "uri": "https://www.python.org/downloads/release/python-380/",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        },
+        {
+            "name": "R",
+            "version": "4.0.2",
+            "uri": {
+                "uri": "https://cran.r-project.org/bin/windows/base/old/4.0.2/",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        }
+    ],
+    "external_data_endpoints": [
+        {
+            "name": "1000 Genomes Project",
+            "url": "ftp://ftp.sra.ebi.ac.uk/vol1/fastq"
+        }
+    ],
+    "environment_variables": {
+        "GENOME_DATA_PATH": "/path/to/genome/data",
+        "SIMULATION_OUTPUT_PATH": "/path/to/simulation/output"
+    }
+}
