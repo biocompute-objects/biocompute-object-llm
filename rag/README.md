@@ -2,7 +2,7 @@
 
 ![Demo GIF](./docs/imgs/demo.gif)
 
-## Usage Guides
+## Documentation
 
 - [Installation and Setup](./docs/installation.md)
 - [Usage](./docs/usage.md)
