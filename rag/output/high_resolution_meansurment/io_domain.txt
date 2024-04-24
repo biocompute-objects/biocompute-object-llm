@@ -1,0 +1,29 @@
+{
+    "input_subdomain": [
+        {
+            "uri": {
+                "filename": "1000_Genomes_data",
+                "uri": "ftp://ftp.sra.ebi.ac.uk/vol1/fastq",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        }
+    ],
+    "output_subdomain": [
+        {
+            "mediatype": "application/octet-stream",
+            "uri": {
+                "filename": "DUF1220_domain_annotations",
+                "uri": "https://github.com/IleaHeft/DUF1220annotator",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        },
+        {
+            "mediatype": "application/octet-stream",
+            "uri": {
+                "filename": "DUF1220_protein_alignments",
+                "uri": "https://github.com/dpastling/DUF1220_simulation",
+                "access_time": "2023-11-01T12:00:00Z"
+            }
+        }
+    ]
+}
