@@ -1,0 +1,7 @@
+{
+    "empirical_error": {},
+    "algorithmic_error": {}
+}
+
+
+The provided paper does not contain specific information that fits into the empirical or algorithmic error domains as defined in the JSON schema. Therefore, both subdomains are returned as empty objects.
