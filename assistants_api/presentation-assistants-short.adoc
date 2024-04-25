@@ -34,3 +34,17 @@ image::./img/Fine-tuned.png[]
 * Task-Specific: Fine-tuning produces tailored AI models for specialized applications, i.e. bioinformatics / biomedical research.
 * Alternative: Fine-tuning costs computing time, instead similar achievements via carefully designed prompt-engineering.
 
+== OpenAI Assistants
+image::./img/OpenAI-Assistants.png[]
+
+== OpenAI Assistants
+[%step]
+* Clarification: OpenAI (the company behind ChatGPT) offers rich functionality through their API
+* Assistants: user file search and code Interpreter, external API function calling by the AI
+* Functionality: build custom AI applications around user's data
+
+== BCOs via GPT
+image::./img/OpenAI-playground-1.png[]
+
+== BCOs via GPT
+image::./img/OpenAI-playground-2.png[]

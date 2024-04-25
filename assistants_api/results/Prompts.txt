@@ -1,0 +1,4 @@
+Search in the attached file for all bioinformatics data analysis operations. Write what you find in json format, following the json schema that can be found in the description_domain.json.
+
+For the bioinformatics data analysis operations you identified, find the parameters for running each command line tool. Write the parameters in json format, following the json schema that can be found in the parametric_domain.json.
+

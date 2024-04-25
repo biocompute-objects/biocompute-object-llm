@@ -1,0 +1,29 @@
+{
+    "parametric_domain": [
+        {
+            "param": "HMMER_seed",
+            "value": "14",
+            "step": "1"
+        },
+        {
+            "param": "HMMER_minimum_match_len",
+            "value": "66",
+            "step": "1"
+        },
+        {
+            "param": "Sequence_analysis_divergence_threshold_percent",
+            "value": 0.30,
+            "step": "1"
+        },
+        {
+            "param": "Annotation_minimum_coverage",
+            "value": "15",
+            "step": "2"
+        },
+        {
+            "param": "Clustering_freq_cutoff",
+            "value": 0.10,
+            "step": "2"
+        }
+    ]
+}

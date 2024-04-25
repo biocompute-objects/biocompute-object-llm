@@ -1,0 +1,33 @@
+{
+    "$schema": "https://raw.githubusercontent.com/biocompute-objects/BCO_Schemas/main/description-domain.json",
+    "description": "The description domain provides a textual description of the BioCompute Object (BCO).",
+    "properties": {
+        "methodology": {
+            "description": "Describes the methodology used for measuring copies of DUF1220 domains and the NBPF genes.",
+            "type": "string"
+        },
+        "effect_of_parameters": {
+            "description": "Characterizes the effect of various sequencing and alignment parameters on the accuracy and precision of the method.",
+            "type": "string"
+        },
+        "levels_of_resolution": {
+            "description": "Describes the levels of resolution at which DUF1220 copy number can be measured.",
+            "type": "string"
+        },
+        "impact_of_sequencing_parameters": {
+            "description": "Evaluates the impact of sequencing parameters, such as read length and paired-end reads, on the quantification of DUF1220 copies.",
+            "type": "string"
+        },
+        "results": {
+            "description": "Summarizes the key results obtained from the analysis of DUF1220 copy numbers.",
+            "type": "string"
+        }
+    },
+    "required": [
+        "methodology",
+        "effect_of_parameters",
+        "levels_of_resolution",
+        "impact_of_sequencing_parameters",
+        "results"
+    ]
+}
