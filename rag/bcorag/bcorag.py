@@ -205,13 +205,14 @@ class BcoRag:
                 source_str = ""
                 for idx, source_node in enumerate(response_object.source_nodes):
                     source_str += (
-                        f"\n\tSource Node {idx + 1}/{len(response_object.source_nodes)}"
+                        f"\n--------------- Source Node '{idx + 1}/{len(response_object.source_nodes)}' ---------------"
                     )
-                    source_str += f"\n\tNode ID: {source_node.node.node_id}"
-                    source_str += f"\n\tSimilarity: {source_node.score}"
+                    source_str += f"\nNode ID: '{source_node.node.node_id}'"
+                    source_str += f"\nSimilarity: '{source_node.score}'"
                     source_str += (
-                        f"\n\tRetrieved Text: {source_node.node.get_content().strip()}\n"
+                        f"\nRetrieved Text:\n{source_node.node.get_content().strip()}\n"
                     )
+                    source_str += "\n"
                 self._display_info(source_str, "Retrieval source(s):")
 
         self._process_output(domain, query_response)
