@@ -13,6 +13,8 @@
 
 ---
 
+![Diagram](../docs/imgs/BCO_LLM_lk4.png)
+
 ## Preliminary Steps
 
 Make sure the setup steps in the [Installation and Setup](./installation.md) documentation are complete.
@@ -60,7 +62,7 @@ Currently, only OpenAI embedding models are supported. Futher documentation on t
 
 ### Vector Store
 
-The vector store handles the indexing, retrieval, and storage process. The indexing process is the method by which a vector store organizes and stores the embeddings of the documents in the database. This process can vary depending on the specific implementation of the vector store chosen. The retrieval process first converts the query into a vector embedding and then performs a dense search operation to rank all the embeddings by how semantically similar they are to the query. Once the ranking is complete, the vector store returns, or retrieves, the most similar embeddings. The number of chosen retrievals to send to the LLM is controlled by the `similarity_top_k` parameter. Different vector stores also support different metadata filtering methods that allow for filtering the candidate set of documents based on certain metadata before performing the semantic search. 
+The vector store handles the indexing, retrieval, and storage process. The indexing process is the method by which a vector store chunks, organizes, and stores the embeddings of the chunked documents in the vector store. This process can vary depending on the specific implementation of the vector store chosen. The specific chunking strategy chosen can have a significant impact on the retrieval process and effects your embedding model choice (different embedding models perform optimally on different chunk sizes). The retrieval process first converts the query into a vector embedding and then performs a dense search operation to rank all the embeddings by how semantically similar they are to the query. Once the ranking is complete, the vector store returns, or retrieves, the most similar embeddings. The number of chosen retrievals to send to the LLM is controlled by the `similarity_top_k` parameter. Different vector stores also support different metadata filtering methods that allow for filtering the candidate set of documents based on certain metadata before performing the semantic search. 
 
 Aside from the built in generic vector stores, LLamaIndex hosts an open source [hub](https://llamahub.ai/?tab=readers) for various other vector store options.
 
