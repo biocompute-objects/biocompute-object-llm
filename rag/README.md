@@ -10,7 +10,12 @@
 
 ## Approach Justification and Background
 
-This BioCompute Object (BCO) assistant will assist users in automatically creating specific BCO domains from user uploaded papers. This proof of concept uses a **Retrieval Augmented Generation** (RAG) approach rather than a standalone (or fine-tuned) large language model (LLM). A traditional standalone LLM suffers from multiple drawbacks in our problem context. 
+This BioCompute Object (BCO) assistant will assist users in automatically creating specific BCO domains from user uploaded papers. This proof of concept uses a **Retrieval Augmented Generation** ([RAG](https://arxiv.org/abs/2005.11401)) approach rather than a standalone (or fine-tuned) large language model (LLM). Our use case is somewhat antithetical to what LLMs were originally designed for. LLMs were designed for creative, free text responses that represent plausible natural language. BCOs, on the other hand, were designed for accurate, non-ambiguous, reproduceable documentation. Given this, there are two main initial questions that have to be considered:
+
+- Current LLMs are often categorized as "stochastic parrots" that have no underlying understanding of text structure, only generating what are considered plausible natural language respones. How well could LLMs consistently produce structured, schema compliant JSON responses (regardless of the actual output content)? 
+- Unlike traditional LLM use cases, the goal of BCOs as described above, are not to generate creative and original output. How can we constrain the LLM to limit creativity, extrapolation, and potentially subjective output? 
+
+Given these considerations and our use case, a traditional standalone LLM suffers from multiple drawbacks in our problem context.
 
 ### Issues with Long Context Windows
 
