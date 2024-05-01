@@ -13,7 +13,7 @@
 
 ---
 
-![Diagram](../docs/imgs/BCO_LLM_lk4.png)
+![Diagram](../docs/imgs/rag_diagram.png)
 
 ## Preliminary Steps
 
@@ -50,7 +50,7 @@ The currently supported data loaders are:
 
 ### Embedding Model
 
-The embedding model is responsible for converting the text into a numerical representation, or embedding. The embedding model is used to transform both the query and the documents in the data store into embeddings which are then compared to find the most similar documents relating to the query. Different embedding models can significantly impact the performance of the RAG pipeline. 
+The embedding model is responsible for converting the text into a numerical representation, or embedding. The embedding model is used to transform both the query and the chunked nodes into embeddings which are then compared to find the most similar nodes relating to the query during the information retrieval process. Different embedding models can significantly impact the performance of the RAG pipeline. Additionally, different embedding models perform optimally on different chunk sizes, so the embedding model choice should ideally be harmonized with the chosen chunking strategy. 
 
 The currently supported embedding models are: 
 
@@ -62,7 +62,7 @@ Currently, only OpenAI embedding models are supported. Futher documentation on t
 
 ### Vector Store
 
-The vector store handles the indexing, retrieval, and storage process. The indexing process is the method by which a vector store chunks, organizes, and stores the embeddings of the chunked documents in the vector store. This process can vary depending on the specific implementation of the vector store chosen. The specific chunking strategy chosen can have a significant impact on the retrieval process and effects your embedding model choice (different embedding models perform optimally on different chunk sizes). The retrieval process first converts the query into a vector embedding and then performs a dense search operation to rank all the embeddings by how semantically similar they are to the query. Once the ranking is complete, the vector store returns, or retrieves, the most similar embeddings. The number of chosen retrievals to send to the LLM is controlled by the `similarity_top_k` parameter. Different vector stores also support different metadata filtering methods that allow for filtering the candidate set of documents based on certain metadata before performing the semantic search. 
+The vector store handles the indexing, retrieval, and storage process. The indexing process is the method by which a vector store chunks, embeds, organizes, and stores the resulting embeddings of the chunked documents in the vector store. This process can vary depending on the specific implementation of the vector store chosen. The specific chunking strategy chosen can have a significant impact on the retrieval process and effects your embedding model choice (different embedding models perform optimally on different chunk sizes). The retrieval process first converts the query into a vector embedding and then performs a dense search operation to rank all the embeddings by how semantically similar they are to the query. Once the ranking is complete, the vector store returns, or retrieves, the most similar embeddings. The number of chosen retrievals to send to the LLM is controlled by the `similarity_top_k` parameter. Different vector stores also support different metadata filtering methods that allow for filtering the candidate set of documents based on certain metadata before performing the semantic search. 
 
 Aside from the built in generic vector stores, LLamaIndex hosts an open source [hub](https://llamahub.ai/?tab=readers) for various other vector store options.
 
@@ -72,7 +72,7 @@ The currently supported vector stores are:
 
 ### Similarity Top K
 
-The `similarity_top_k` parameter in the similarity search process refers to the number of embeddings to return as a result of the semantic retrieval process. When the semantic search process is performend, the node embeddings are ranked by how smenatically similar they are to the query embedding. After the ranking process is completed, the top `k` most similar embeddings are sent to the LLM along with the query. Larger values will result in more input tokens.
+The `similarity_top_k` parameter in the similarity search process refers to the number of nodes to return as a result of the semantic retrieval process. When the semantic search process is performend, the node embeddings are ranked by how smenatically similar they are to the query embedding. After the ranking process is completed, the top `k` most similar embeddings are sent to the LLM along with the query. Larger values will result in more input tokens.
 
 Note: The `similarity_top_k` parameter here is unrelated to the `top k` parameter for large language models which limits the model's vocabulary sampling set when considering the next word to generate.
 
