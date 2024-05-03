@@ -7,10 +7,13 @@
     - [Data Loader](#data-loader)
     - [Embedding Model](#embedding-model)
     - [Vector Store](#vector-store)
+    - [Similarity Top K](#similarity-top-k)
     - [LLM Model](#llm-model)
     - [Mode](#mode)
 
 ---
+
+![Diagram](../docs/imgs/BCO_LLM_lk4.png)
 
 ## Preliminary Steps
 
@@ -36,7 +39,7 @@ The option picker interface can be navigated with the `n` or `down arrow` keys f
 
 ### Data Loader
 
-The data loader (or Reader) is one of the key abstraction concepts in the LlamaIndex library. Data loaders handle the data ingestion and formatting into Document objects and the subsequent Node objects. At a high level, Documents are a generic container for the data source. By default, Documents store the text (and/or images) from the data source, a dictionary of annotations containing the metadata, and a dictionary of relationships to other Documents and Nodes. A Node represents a "chunk" of a source Document. 
+The data loader (or Reader) is one of the key abstraction concepts in the LlamaIndex library. Data loaders handle the data ingestion and formatting into Document objects, which will eventually be chunked into Node objects by the vector store. At a high level, Documents are a generic container for the data source. By default, Documents store the text (and/or images) from the data source, a dictionary of annotations containing the metadata, and a dictionary of relationships to other Documents and Nodes. A Node represents a "chunk" of a source Document. 
 
 Aside from the built in generic data loaders, LLamaIndex hosts an open source [hub](https://llamahub.ai/?tab=readers) for various community built data loaders for a variety of data sources. Different data loaders differ in how they create and structure the resulting Documents. Depending on the specialization of the data loader in relation to the structure of the raw data source, this can have a significant impact on the overall performance of the downstream pipeline steps.
 
@@ -59,13 +62,19 @@ Currently, only OpenAI embedding models are supported. Futher documentation on t
 
 ### Vector Store
 
-The vector store affects multiple components in our RAG pipeline. The first concept is the indexing process. The indexing process is the method by which a vector store organizes and stores the embeddings of the documents in the database. This process can vary depending on the specific implementation of the vector store chosen. The second concept is the retrieval process. The dense search operation used to retrieve the most similar documents to a given query based on embedding similarity differs based on specific vector store implementation. Different vector stores also support different metadata filtering methods that allow for filtering the candidate set of documents based on certain metadata before performing the semantic search. 
+The vector store handles the indexing, retrieval, and storage process. The indexing process is the method by which a vector store chunks, organizes, and stores the embeddings of the chunked documents in the vector store. This process can vary depending on the specific implementation of the vector store chosen. The specific chunking strategy chosen can have a significant impact on the retrieval process and effects your embedding model choice (different embedding models perform optimally on different chunk sizes). The retrieval process first converts the query into a vector embedding and then performs a dense search operation to rank all the embeddings by how semantically similar they are to the query. Once the ranking is complete, the vector store returns, or retrieves, the most similar embeddings. The number of chosen retrievals to send to the LLM is controlled by the `similarity_top_k` parameter. Different vector stores also support different metadata filtering methods that allow for filtering the candidate set of documents based on certain metadata before performing the semantic search. 
 
 Aside from the built in generic vector stores, LLamaIndex hosts an open source [hub](https://llamahub.ai/?tab=readers) for various other vector store options.
 
 The currently supported vector stores are:
 
 - `VectorStoreIndex` (default): This is the default built-in vector store provided directly by the LlamaIndex library. While it does support metadata filtering, by default it does not perform any metadata filtering.
+
+### Similarity Top K
+
+The `similarity_top_k` parameter in the similarity search process refers to the number of embeddings to return as a result of the semantic retrieval process. When the semantic search process is performend, the node embeddings are ranked by how smenatically similar they are to the query embedding. After the ranking process is completed, the top `k` most similar embeddings are sent to the LLM along with the query. Larger values will result in more input tokens.
+
+Note: The `similarity_top_k` parameter here is unrelated to the `top k` parameter for large language models which limits the model's vocabulary sampling set when considering the next word to generate.
 
 ### LLM Model
 

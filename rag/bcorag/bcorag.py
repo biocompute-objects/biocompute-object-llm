@@ -6,8 +6,12 @@ from llama_index.core import (
     SimpleDirectoryReader,
     Settings,
     download_loader,
+    get_response_synthesizer,
 )
 from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
+from llama_index.core.retrievers import VectorIndexRetriever
+from llama_index.core.query_engine import RetrieverQueryEngine
+from llama_index.core.response import Response
 from llama_index.llms.openai import OpenAI  # type: ignore
 from llama_index.embeddings.openai import OpenAIEmbedding  # type: ignore
 from dotenv import load_dotenv
@@ -31,12 +35,12 @@ from bcorag.prompts import (
 class BcoRag:
     """Class to handle the RAG implementation."""
 
-    def __init__(self, user_selections: dict[str, str], output_dir: str = "./output"):
+    def __init__(self, user_selections: dict, output_dir: str = "./output"):
         """Constructor.
 
         Parameters
         ---------
-        user_selections : dict[str, str]
+        user_selections : dict[str, str | int]
             The user configuration selections.
         output_dir : str (default: "./output")
             The directory to dump the outputs.
@@ -71,6 +75,7 @@ class BcoRag:
         _vector_store = user_selections["vector_store"]
         _loader = user_selections["loader"]
         _mode = user_selections["mode"]
+        _top_k = int(user_selections["similarity_top_k"])
 
         # domain mapping
         self.domain_map = {
@@ -159,6 +164,13 @@ class BcoRag:
         if _vector_store == "VectorStoreIndex":
             self.index = VectorStoreIndex.from_documents(self.documents)
 
+        # create query engine
+        retriever = VectorIndexRetriever(index=self.index, similarity_top_k=_top_k)
+        response_synthesizer = get_response_synthesizer()
+        self.query_engine = RetrieverQueryEngine(
+            retriever=retriever, response_synthesizer=response_synthesizer
+        )
+
         # capture indexing embed token
         if self.debug:
             self.token_counts["embedding"] += self.token_counter.total_embedding_token_count  # type: ignore
@@ -176,11 +188,10 @@ class BcoRag:
         str
             The generated domain.
         """
-        query_engine = self.index.as_query_engine(verbose=self.debug)
         query_prompt = QUERY_PROMPT.format(domain, self.domain_map[domain]["prompt"])
         if self.domain_map[domain]["top_level"]:
             query_prompt += f"\n{SUPPLEMENT_PROMPT}"
-        response_object = query_engine.query(query_prompt)
+        response_object = self.query_engine.query(query_prompt)
         query_response = str(response_object)
 
         if self.debug:
@@ -190,6 +201,19 @@ class BcoRag:
             self.token_counts["total"] += self.token_counter.total_llm_token_count  # type: ignore
             self.token_counts["embedding"] += self.token_counter.total_embedding_token_count  # type: ignore
             self._display_info(self.token_counts, "Updated token counts:")
+            if type(response_object) == Response:
+                source_str = ""
+                for idx, source_node in enumerate(response_object.source_nodes):
+                    source_str += (
+                        f"\n--------------- Source Node '{idx + 1}/{len(response_object.source_nodes)}' ---------------"
+                    )
+                    source_str += f"\nNode ID: '{source_node.node.node_id}'"
+                    source_str += f"\nSimilarity: '{source_node.score}'"
+                    source_str += (
+                        f"\nRetrieved Text:\n{source_node.node.get_content().strip()}\n"
+                    )
+                    source_str += "\n"
+                self._display_info(source_str, "Retrieval source(s):")
 
         self._process_output(domain, query_response)
 
