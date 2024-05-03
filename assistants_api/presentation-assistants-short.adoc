@@ -1,7 +1,9 @@
-== Large Language Models (LLMs)
+:revealjs_theme: sky
+
+== Large Language Models
 image::./img/LLMs-data-ingest.png[]
 
-== Large Language Models (LLMs)
+== Large Language Models
 [%step]
 * Example LLMs: ChatGPT, Gemini, Llamma, Claude, capable of understanding and generating human-like language, images, music.
 * Data scope: Trained on massive datasets, including PetaBytes of internet text, Wikipedia and Pubmed.
@@ -25,10 +27,10 @@ image::img/FDA-LLMs.png[]
 * Inference Techniques: The models use sophisticated algorithms to generate text that aligns with context and user input.
 * Diversity: Can produce a wide range of responses, from factual information to hallucinations and "deepfakes".
 
-== Fine-Tuning and Adaptation
+== Fine-Tuning 
 image::./img/Fine-tuned.png[]
 
-== Fine-Tuning and Adaptation
+== Fine-Tuning 
 [%step]
 * Fine-Tuning: LLMs can be fine-tuned with data from specific domains, enhancing their relevance and performance.
 * Task-Specific: Fine-tuning produces tailored AI models for specialized applications, i.e. bioinformatics / biomedical research.
@@ -43,8 +45,27 @@ image::./img/OpenAI-Assistants.png[]
 * Assistants: user file search and code Interpreter, external API function calling by the AI
 * Functionality: build custom AI applications around user's data
 
-== BCOs via GPT
+== GPT for BCO
+image::./img/OpenAI-playground-2.png[]
+
+== Promt Engineering
 image::./img/OpenAI-playground-1.png[]
 
+== Example publication
+image::./img/DUF1220.png[]
+
 == BCOs via GPT
-image::./img/OpenAI-playground-2.png[]
+image::./img/Description-domain-populating_v2.png[]
+
+== BCOs via GPT
+image::./img/Execution-domain-populating_v2.png[]
+
+== BCOs via GPT
+image::./img/Parametric-domain-populating_v2.png[]
+
+== Summary & Conclusions
+* Strong NLP capabilities of GPTs, good results.
+* Iterative training, prompting with canonical BCO.
+* Fine tuning with BCO json - text chunks dataset.
+
+== Thank you !

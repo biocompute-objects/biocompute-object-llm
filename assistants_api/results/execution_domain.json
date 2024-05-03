@@ -1,0 +1,16 @@
+{
+    "execution_domain": {
+        "script": [
+            {
+                "uri": {
+                    "uri": "https://github.com/dpastling/plethora"
+                }
+            },
+            {
+                "uri": {
+                    "uri": "https://github.com/IleaHeft/DUF1220annotator"
+                }
+            }
+        ]
+    }
+}
