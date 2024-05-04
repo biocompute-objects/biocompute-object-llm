@@ -2,6 +2,8 @@
 
 ![Demo GIF](./docs/imgs/demo.gif)
 
+[Sean Kim](https://github.com/seankim658)
+
 ## Documentation
 
 - [Installation and Setup](./docs/installation.md)
