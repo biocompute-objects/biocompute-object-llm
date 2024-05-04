@@ -4,6 +4,7 @@ Will automatically grab any PDF file in the ../../papers/ directory.
 
 import glob
 import os
+import re
 from pick import pick
 from bcorag import misc_functions as misc_fns
 from typing import Tuple, Any
@@ -59,6 +60,14 @@ def initialize_picker(filetype: str = "pdf") -> dict | None:
             return None
         return_data[option] = target_option
 
+    repo_data = _repo_picker()
+    if repo_data is None:
+        return None
+    if repo_data["user"] is None:
+        return_data["git_data"] = None
+    else:
+        return_data["git_data"] = repo_data
+
     return return_data
 
 
@@ -76,7 +85,7 @@ def _file_picker(path: str, filetype: str = "pdf") -> Tuple[str, str] | None:
     Returns
     -------
     (str, str) or None
-        Returns the name of the selected file or None if the user selects exit.
+        Returns the name and path of the selected file or None if the user selects exit.
     """
     target_files = glob.glob(f"{path}*.{filetype}")
     pick_options = [os.path.basename(filename) for filename in target_files]
@@ -87,6 +96,33 @@ def _file_picker(path: str, filetype: str = "pdf") -> Tuple[str, str] | None:
     if option == EXIT_OPTION:
         return None
     return str(option), f"{path}{option}"
+
+
+def _repo_picker() -> dict | None:
+    """Allows the user to input a github repository link to be included in the indexing.
+
+    Returns
+    -------
+    dict or None
+        Returns parsed repo information from the link or None if the user exits.
+    """
+    pattern = r"https://github\.com/([^/]+)/([^/]+)"
+    return_data: dict[str, str | None] = {"user": None, "repo": None}
+    while True:
+        url = input(
+            'If you would like to include a Github repository enter the URL below. Enter "x" to exit or leave blank to skip.\n'
+        )
+        url = url.strip()
+        if not url or url is None:
+            return return_data
+        elif url == "x":
+            return None
+        match = re.match(pattern, url.lower())
+        if match is None:
+            print("Error parsing repository URL.")
+            continue
+        return_data = {"user": match.groups()[0], "repo": match.groups()[1]}
+        return return_data
 
 
 def _create_picker(
