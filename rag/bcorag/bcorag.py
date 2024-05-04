@@ -14,10 +14,12 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.response import Response
 from llama_index.llms.openai import OpenAI  # type: ignore
 from llama_index.embeddings.openai import OpenAIEmbedding  # type: ignore
+from llama_index.readers.github import GithubRepositoryReader, GithubClient  # type: ignore
 from dotenv import load_dotenv
 import tiktoken
 from pathlib import Path
 import os
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 import json
 import bcorag.misc_functions as misc_fns
 from bcorag.prompts import (
@@ -30,6 +32,17 @@ from bcorag.prompts import (
     PARAMETRIC_DOMAIN,
     ERROR_DOMAIN,
 )
+
+# git branch to read repositories from
+GIT_BRANCH = "master"
+
+
+@contextmanager
+def supress_stdout_stderr():
+    """Context manager that redirects stdout and stderr to devnull."""
+    with open(os.devnull, "w") as fnull:
+        with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
+            yield (err, out)
 
 
 class BcoRag:
@@ -76,6 +89,7 @@ class BcoRag:
         _loader = user_selections["loader"]
         _mode = user_selections["mode"]
         _top_k = int(user_selections["similarity_top_k"])
+        _git_flag = True if user_selections["git_data"] is not None else False
 
         # domain mapping
         self.domain_map = {
@@ -119,6 +133,14 @@ class BcoRag:
 
         load_dotenv()
 
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not openai_api_key:
+            raise EnvironmentError("OpenAI API key not found.")
+
+        github_token = os.getenv("GITHUB_TOKEN")
+        if _git_flag and not github_token:
+            raise EnvironmentError("Github token not found.")
+
         self.output_path = f"{output_dir}/{os.path.splitext(_file_name.lower().replace(' ', '_').strip())[0]}/"
         misc_fns.check_dir(self.output_path)
         self.debug = True if _mode == "debug" else False
@@ -154,10 +176,26 @@ class BcoRag:
         # handle data loader
         if _loader == "SimpleDirectoryReader":
             loader = SimpleDirectoryReader(input_files=[_file_path])
-            documents = loader.load_data()
+            paper_documents = loader.load_data()
         elif _loader == "PDFReader":
-            pdf_loader = download_loader("PDFReader")
-            documents = pdf_loader().load_data(file=Path(_file_path))
+            with supress_stdout_stderr():
+                pdf_loader = download_loader("PDFReader")
+            paper_documents = pdf_loader().load_data(file=Path(_file_path))
+        documents = paper_documents  # type: ignore
+        if _git_flag:
+            github_client = GithubClient(github_token)
+            with supress_stdout_stderr():
+                download_loader("GithubRepositoryReader")
+            git_loader = GithubRepositoryReader(
+                github_client=github_client,
+                owner=user_selections["git_data"]["user"],
+                repo=user_selections["git_data"]["repo"],
+            )
+            self.logger.info(
+                f"Loading repo `{user_selections['git_data']['repo']}` from user `{user_selections['git_data']['user']}`"
+            )
+            github_documents = git_loader.load_data(branch=GIT_BRANCH)
+            documents += github_documents
         self.documents = documents  # type: ignore
 
         # handle indexing
@@ -204,9 +242,7 @@ class BcoRag:
             if type(response_object) == Response:
                 source_str = ""
                 for idx, source_node in enumerate(response_object.source_nodes):
-                    source_str += (
-                        f"\n--------------- Source Node '{idx + 1}/{len(response_object.source_nodes)}' ---------------"
-                    )
+                    source_str += f"\n--------------- Source Node '{idx + 1}/{len(response_object.source_nodes)}' ---------------"
                     source_str += f"\nNode ID: '{source_node.node.node_id}'"
                     source_str += f"\nSimilarity: '{source_node.score}'"
                     source_str += (
