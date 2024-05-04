@@ -10,6 +10,7 @@
     - [Similarity Top K](#similarity-top-k)
     - [LLM Model](#llm-model)
     - [Mode](#mode)
+    - [Github Repository](#github-repository)
 
 ---
 
@@ -90,3 +91,7 @@ Currently, only OpenAI LLM models are supported. Futher documentation on the spe
 ### Mode
 
 The mode option has no effect on the RAG performance, but controls how much extra information is included in the run log. Choosing the `debug` mode will include an extensive logging of everything that is happening during each run. Choosing the `production` mode will only include the necessary logging, such as the user options and return responses.
+
+### Github Repository
+
+After choosing the configuration options, you have the choice to also include a Github repository URL to include in the indexing process. The URL provided will automatically be parsed for the repository owner and repository name information. This will supplement the PDF data ingestion to provide more specific output for workflow specific steps in the description and parametric domains. 
