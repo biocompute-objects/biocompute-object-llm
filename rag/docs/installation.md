@@ -48,11 +48,16 @@ Then install the `rag/` directory dependencies:
 
 ## OpenAI API Key
 
-Create your `.env` file and add your OpenAI API key. For example:
+Create your `.env` file and add your OpenAI API key and Github personal access token (if using Github option). For example:
 
 ```.env
 OPENAI_API_KEY=<KEY>
+GITHUB_TOKEN=<TOKEN>
 ```
+
+References:
+- [OpenAI API Key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
+- [Github Personal Access Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
 ## Create log Directory
 
