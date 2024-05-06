@@ -18,7 +18,7 @@
         "semantic"
       ],
       "default": "1024 chunk size/20 chunk overlap",
-      "documentation": "<placeholder>"
+      "documentation": "https://github.com/seankim658/biocompute-object-llm/blob/main/rag/docs/usage.md#chunking-stragegy"
     },
     "embedding_model": {
       "list": [
