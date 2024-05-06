@@ -14,6 +14,7 @@ from llama_index.core.query_engine import RetrieverQueryEngine
 from llama_index.core.response import Response
 from llama_index.llms.openai import OpenAI  # type: ignore
 from llama_index.embeddings.openai import OpenAIEmbedding  # type: ignore
+from llama_index.core.node_parser import SemanticSplitterNodeParser
 from llama_index.readers.github import GithubRepositoryReader, GithubClient  # type: ignore
 from dotenv import load_dotenv
 import tiktoken
@@ -41,8 +42,8 @@ GIT_BRANCH = "master"
 def supress_stdout_stderr():
     """Context manager that redirects stdout and stderr to devnull."""
     with open(os.devnull, "w") as fnull:
-        with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
-            yield (err, out)
+        with redirect_stderr(fnull), redirect_stdout(fnull):
+            yield
 
 
 class BcoRag:
@@ -80,6 +81,8 @@ class BcoRag:
             The token counter handler or None if mode is production.
         token_counts : dict or None
             The token counts or None if mode is production.
+        splitter : SemanticSplitterNodeParser or None
+            The node parser (if a non-fixed chunking strategy is chosen).
         """
         _llm_model_name = user_selections["llm"]
         _embed_model_name = user_selections["embedding_model"]
@@ -90,6 +93,10 @@ class BcoRag:
         _mode = user_selections["mode"]
         _top_k = int(user_selections["similarity_top_k"])
         _git_flag = True if user_selections["git_data"] is not None else False
+        _chunk_strat = user_selections["chunking_config"]
+        _chunk_fixed = (
+            False if user_selections["chunking_config"] == "semantic" else True
+        )
 
         # domain mapping
         self.domain_map = {
@@ -154,6 +161,30 @@ class BcoRag:
         self.embed_model = OpenAIEmbedding(model=_embed_model_name)
         Settings.embed_model = self.embed_model
 
+        # handle chunking strategy chosen
+        self.splitter = None
+        if _chunk_strat == "semantic":
+            self.splitter = SemanticSplitterNodeParser.from_defaults(
+                buffer_size=1,
+                embed_model=self.embed_model,
+                # The percentile of cosin dissimilarity that must be exceeded
+                # between a group of sentences and the next to form a node. The
+                # smaller this number is, the more nodes will be generated.
+                breakpoint_percentile_threshold=90,
+            )
+        elif _chunk_strat == "256 chunk size/20 chunk overlap":
+            Settings.chunk_size = 256
+            Settings.chunk_overlap = 50
+        elif _chunk_strat == "512 chunk size/50 chunk overlap":
+            Settings.chunk_size = 512
+            Settings.chunk_overlap = 50
+        elif _chunk_strat == "2048 chunk size/50 chunk overlap":
+            Settings.chunk_size = 2048
+            Settings.chunk_overlap = 50
+        else:
+            Settings.chunk_size = 1024
+            Settings.chunk_overlap = 20
+
         # setup llm model
         Settings.llm = OpenAI(model=_llm_model_name)
 
@@ -200,7 +231,11 @@ class BcoRag:
 
         # handle indexing
         if _vector_store == "VectorStoreIndex":
-            self.index = VectorStoreIndex.from_documents(self.documents)
+            if _chunk_fixed:
+                self.index = VectorStoreIndex.from_documents(self.documents)
+            else:
+                nodes = self.splitter.build_semantic_nodes_from_documents(self.documents)  # type: ignore
+                self.index = VectorStoreIndex(nodes=nodes)
 
         # create query engine
         retriever = VectorIndexRetriever(index=self.index, similarity_top_k=_top_k)
@@ -245,6 +280,15 @@ class BcoRag:
                     source_str += f"\n--------------- Source Node '{idx + 1}/{len(response_object.source_nodes)}' ---------------"
                     source_str += f"\nNode ID: '{source_node.node.node_id}'"
                     source_str += f"\nSimilarity: '{source_node.score}'"
+                    source_str += (
+                        f"\nMetadata String:\n`{source_node.node.get_metadata_str()}`"
+                    )
+                    source_str += (
+                        f"\nMetadata Size: `{len(source_node.node.get_metadata_str())}`"
+                    )
+                    source_str += (
+                        f"\nContent Size: `{len(source_node.node.get_content())}`"
+                    )
                     source_str += (
                         f"\nRetrieved Text:\n{source_node.node.get_content().strip()}\n"
                     )
