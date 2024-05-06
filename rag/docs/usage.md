@@ -5,6 +5,7 @@
 - [Generate Domains](#generate-domains)
 - [Options](#options)
     - [Data Loader](#data-loader)
+    - [Chunking Strategy](#chunking-stragegy)
     - [Embedding Model](#embedding-model)
     - [Vector Store](#vector-store)
     - [Similarity Top K](#similarity-top-k)
@@ -48,6 +49,22 @@ The currently supported data loaders are:
 
 - `SimpleDirectoryReader` (default): This is a built-in data loader provided directly by the LlamaIndex library. It is the most generic option and is not specialized in any specific file type.
 - `PDFReader`: This is an external data loader from LlamaHub that is specialized to PDF files. Because this is an external reader, there will be some overhead the first time you choose this option as the loader will have to be downloaded. Once downloaded, future runs with this option will not incur the download overhead. If this option is chosen, you will see command line ouptut checking if the dependency requirements are satisfied. 
+
+### Chunking Stragegy
+
+The chunking strategy is the specific technique to split the Documents into Nodes. The chunking strategy chosen should influence downstream configuration choices, specifically the embedding model and similarity top k parameter selections. Recent research has shown that chunking optimization in RAG systems can have more of an impact on performance then most other parameter configurations, making it one of the most important configuration options. There are two general chunking strategies that this tool currently supports: fixed sized chunking and semantic chunking. 
+
+Fixed size chunking strategies involve pre-setting the `chunk_size` and `chunk_overlap` parameters. The `chunk_size` controls the granularity of the chunks (or Nodes) by setting the token limit per chunk. For example, a chunk size of `256` will create more granular chunks, and as a result, more Nodes. However, vital information might not be among the top retrieved chunks, especially if the `similarity-top-k` parameter is not scaled accordingly. Conversly, a chunk size of `2048` is more likely to encompass relevant information at the cost of increased noise and a loss of specificity. With fixed size chunking stragies, it is important to scale the `similarity-top-k` parameter appropriately and to choose an embedding model that both supports (and performs well on) the chosen chunk size.
+
+The semantic chunking supported by this tool involves using a semantic splitter to adaptively pick the breakpoint in-between sentences using embedding similarity. This ensure sthat a chunk contains sentences that are semantically related to each other. Note, semantic chunking introduces non-trival overhead in terms of computational resources and API calls. Especially for very large documents, expect worse runtime performance.
+
+The currently supported chunking strategies are:
+
+- `256 chunk size/20 chunk overlap`: Fixed chunking strategy with 256 tokens and a 20 token overlap between chunks.
+- `512 chunk size/50 chunk overlap`: Fixed chunking strategy with 512 tokens and a 50 token overlap between chunks.
+- `1024 chunk size/20 chunk overlap` (default): Fixed chunking strategy with 1024 tokens and a 20 token overlap between chunks. 
+- `2048 chunk size/50 chunk overlap`: Fixed chunking strategy with 2048 tokens and a 50 token overlap between chunks.
+- `semantic`: Semantic chunking based on adaptive chunk splitting.
 
 ### Embedding Model
 
