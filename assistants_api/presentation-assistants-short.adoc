@@ -1,7 +1,12 @@
 :revealjs_theme: sky
+:pdf-page-layout: landscape
+:pdf-page-mode: fullscreen
+:text-align: center
 
 == Large Language Models
-image::./img/LLMs-data-ingest.png[]
+image::./img/LLMs-data-ingest.png[400,400]
+
+<<<
 
 == Large Language Models
 [%step]
@@ -9,8 +14,12 @@ image::./img/LLMs-data-ingest.png[]
 * Data scope: Trained on massive datasets, including PetaBytes of internet text, Wikipedia and Pubmed.
 * Applications: LLMs are utilized in chatbots, text generation, reasoning and problem solving, creative output.
 
+<<<
+
 == Artificial Neural Networks
-image::./img/GPTs.png[]
+image::./img/GPTs.png[400,400]
+
+<<<
 
 == Artificial Neural Networks
 [%step]
@@ -18,8 +27,12 @@ image::./img/GPTs.png[]
 * Definition: Artificial Neural Networks (ANNs), are fundamentally complex non-linear function estimators - pattern classifiers.
 * Innovation:  GPTs are ANNs that implement "multi-head attention", enabling capture of long-range patterns in training data, emergent "intelligence".
 
+<<<
+
 == Generation and Inference
-image::img/FDA-LLMs.png[]
+image::img/FDA-LLMs.png[400,400]
+
+<<<
 
 == Generation and Inference
 [%step]
@@ -27,8 +40,12 @@ image::img/FDA-LLMs.png[]
 * Inference Techniques: The models use sophisticated algorithms to generate text that aligns with context and user input.
 * Diversity: Can produce a wide range of responses, from factual information to hallucinations and "deepfakes".
 
+<<<
+
 == Fine-Tuning 
-image::./img/Fine-tuned.png[]
+image::./img/Fine-tuned.png[400,400]
+
+<<<
 
 == Fine-Tuning 
 [%step]
@@ -36,8 +53,12 @@ image::./img/Fine-tuned.png[]
 * Task-Specific: Fine-tuning produces tailored AI models for specialized applications, i.e. bioinformatics / biomedical research.
 * Alternative: Fine-tuning costs computing time, instead similar achievements via carefully designed prompt-engineering.
 
+<<<
+
 == OpenAI Assistants
-image::./img/OpenAI-Assistants.png[]
+image::./img/OpenAI-Assistants.png[400,400]
+
+<<<
 
 == OpenAI Assistants
 [%step]
@@ -45,27 +66,43 @@ image::./img/OpenAI-Assistants.png[]
 * Assistants: user file search and code Interpreter, external API function calling by the AI
 * Functionality: build custom AI applications around user's data
 
+<<<
+
 == GPT for BCO
-image::./img/OpenAI-playground-2.png[]
+image::./img/OpenAI-playground-2.png[900,900]
+
+<<<
 
 == Promt Engineering
-image::./img/OpenAI-playground-1.png[]
+image::./img/OpenAI-playground-1.png[900,900]
+
+<<<
 
 == Example publication
-image::./img/DUF1220.png[]
+image::./img/DUF1220.png[600,600]
+
+<<<
 
 == BCOs via GPT
-image::./img/Description-domain-populating_v2.png[]
+image::./img/Description-domain-populating_v2.png[600,600]
+
+<<<
 
 == BCOs via GPT
-image::./img/Execution-domain-populating_v2.png[]
+image::./img/Execution-domain-populating_v2.png[600,600]
+
+<<<
 
 == BCOs via GPT
-image::./img/Parametric-domain-populating_v2.png[]
+image::./img/Parametric-domain-populating_v2.png[600,600]
+
+<<<
 
 == Summary & Conclusions
 * Strong NLP capabilities of GPTs, good results.
 * Iterative training, prompting with canonical BCO.
 * Fine tuning with BCO json - text chunks dataset.
+
+<<<
 
 == Thank you !
