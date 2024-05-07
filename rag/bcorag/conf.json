@@ -2,32 +2,66 @@
   "paper_directory": "../papers/",
   "options": {
     "loader": {
-      "list": ["SimpleDirectoryReader", "PDFReader"],
+      "list": [
+        "SimpleDirectoryReader",
+        "PDFReader"
+      ],
       "default": "SimpleDirectoryReader",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#data-loader"
     },
+    "chunking_config": {
+      "list": [
+        "256 chunk size/20 chunk overlap",
+        "512 chunk size/50 chunk overlap",
+        "1024 chunk size/20 chunk overlap",
+        "2048 chunk size/50 chunk overlap",
+        "semantic"
+      ],
+      "default": "1024 chunk size/20 chunk overlap",
+      "documentation": "https://github.com/seankim658/biocompute-object-llm/blob/main/rag/docs/usage.md#chunking-stragegy"
+    },
     "embedding_model": {
-      "list": ["text-embedding-3-small", "text-embedding-3-large", "text-embedding-ada-002"],
+      "list": [
+        "text-embedding-3-small",
+        "text-embedding-3-large",
+        "text-embedding-ada-002"
+      ],
       "default": "text-embedding-3-small",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#embedding-model"
     },
     "vector_store": {
-      "list": ["VectorStoreIndex"],
+      "list": [
+        "VectorStoreIndex"
+      ],
       "default": "VectorStoreIndex",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#vector-store"
     },
     "similarity_top_k": {
-      "list": ["1", "2", "3", "4", "5"],
+      "list": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
       "default": "1",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#similarity-top-k"
     },
     "llm": {
-      "list": ["gpt-3.5-turbo", "gpt-4-turbo", "gpt-4-turbo-preview", "gpt-4"],
+      "list": [
+        "gpt-3.5-turbo",
+        "gpt-4-turbo",
+        "gpt-4-turbo-preview",
+        "gpt-4"
+      ],
       "default": "gpt-4-turbo",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#llm-model"
     },
     "mode": {
-      "list": ["debug", "production"],
+      "list": [
+        "debug",
+        "production"
+      ],
       "default": "production",
       "documentation": "https://github.com/biocompute-objects/biocompute-object-llm/blob/main/rag/docs/usage.md#mode"
     }

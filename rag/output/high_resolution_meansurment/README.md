@@ -1,5 +1,7 @@
 # High Resolution Measurement Paper
 
+**NOTE**: These output results are outdated. The tool feature set has been updated since these results were generated.
+
 - [Usability Domain](#usability-domain)
 - [Description Domain](#description-domain)
 - [Execution Domain](#execution-domain)
