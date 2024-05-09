@@ -50,7 +50,7 @@ The currently supported data loaders are:
 - `SimpleDirectoryReader` (default): This is a built-in data loader provided directly by the LlamaIndex library. It is the most generic option and is not specialized in any specific file type.
 - `PDFReader`: This is an external data loader from LlamaHub that is specialized to PDF files. Because this is an external reader, there will be some overhead the first time you choose this option as the loader will have to be downloaded. Once downloaded, future runs with this option will not incur the download overhead. If this option is chosen, you will see command line ouptut checking if the dependency requirements are satisfied. 
 
-### Chunking Stragegy
+### Chunking Strategy
 
 The chunking strategy is the specific technique to split the Documents into Nodes. The chunking strategy chosen should influence downstream configuration choices, specifically the embedding model and similarity top k parameter selections. Recent research has shown that chunking optimization in RAG systems can have more of an impact on performance then most other parameter configurations, making it one of the most important configuration options. There are two general chunking strategies that this tool currently supports: fixed sized chunking and semantic chunking. 
 
